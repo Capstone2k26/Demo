@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d1117">
+  <title>Git &amp; GitHub — the field guide</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0d1117;
+      --panel: #161b22;
+      --panel-2: #1c2430;
+      --line: #303946;
+      --text: #e6edf3;
+      --muted: #9ba8b7;
+      --green: #7ee787;
+      --blue: #79c0ff;
+      --purple: #d2a8ff;
+      --orange: #ffa657;
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(ellipse at 80% -10%, rgba(56, 139, 253, .12), transparent 40%),
+        var(--bg);
+      color: var(--text);
+      font: 15px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    .wrap { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      border-bottom: 1px solid rgba(48, 57, 70, .8);
+      background: rgba(13, 17, 23, .86);
+      backdrop-filter: blur(14px);
+    }
+    .nav {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 700; letter-spacing: -.02em; }
+    .brand-mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border: 1px solid #3b4655;
+      border-radius: 10px;
+      color: var(--green);
+      background: var(--panel);
+      font-size: 18px;
+    }
+    .nav-links { display: flex; align-items: center; gap: 25px; color: var(--muted); font-size: 13px; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      padding: 8px 13px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      color: var(--text);
+      background: var(--panel);
+      font-size: 13px;
+    }
+
+    .hero { padding: 86px 0 70px; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--green);
+      font: 700 11px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; box-shadow: 0 0 12px currentColor; }
+    h1 { max-width: 780px; margin: 19px 0 17px; font-size: clamp(42px, 7vw, 76px); line-height: 1.03; letter-spacing: -.065em; }
+    h1 span { color: var(--green); }
+    .hero-copy { max-width: 630px; margin: 0; color: var(--muted); font-size: 17px; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+    .button {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 0 16px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      font-weight: 650;
+      transition: transform .18s ease, border-color .18s ease;
+    }
+    .button:hover { transform: translateY(-2px); }
+    .button-primary { color: #07120b; background: var(--green); }
+    .button-secondary { border-color: var(--line); background: var(--panel); }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 34px; color: var(--muted); font-size: 12px; }
+    .hero-meta strong { color: var(--text); font-weight: 600; }
+
+    .section { padding: 54px 0; }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 23px; }
+    .section-heading h2 { margin: 6px 0 0; font-size: clamp(25px, 4vw, 36px); letter-spacing: -.045em; line-height: 1.15; }
+    .section-heading p { max-width: 430px; margin: 0; color: var(--muted); font-size: 14px; }
+    .label { color: var(--blue); font: 700 11px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .1em; text-transform: uppercase; }
+
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .compare-card, .step-card, .terminal, .concept-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(145deg, rgba(28, 36, 48, .85), rgba(22, 27, 34, .95));
+    }
+    .compare-card { min-height: 205px; padding: 24px; }
+    .card-icon { display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid var(--line); border-radius: 11px; color: var(--green); background: var(--panel); font-size: 18px; }
+    .compare-card h3 { margin: 18px 0 7px; font-size: 19px; letter-spacing: -.025em; }
+    .compare-card p { max-width: 420px; margin: 0; color: var(--muted); font-size: 14px; }
+    .compare-card .tag { display: inline-block; margin-top: 19px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 6px; color: var(--blue); font: 11px ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+    .workflow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; }
+    .step-card { position: relative; padding: 20px 18px; }
+    .step-number { color: var(--purple); font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .step-card h3 { margin: 20px 0 6px; font-size: 16px; }
+    .step-card p { min-height: 44px; margin: 0; color: var(--muted); font-size: 13px; }
+    .step-card code { display: block; margin-top: 15px; color: var(--green); font: 11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+    .commands-layout { display: grid; grid-template-columns: .75fr 1.25fr; gap: 22px; align-items: start; }
+    .command-intro p { color: var(--muted); font-size: 14px; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 7px; margin: 20px 0 0; }
+    .tab {
+      padding: 8px 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      background: var(--panel);
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .tab[aria-selected="true"] { border-color: #3f7250; color: var(--green); background: rgba(46, 160, 67, .1); }
+    .terminal { overflow: hidden; }
+    .terminal-top { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid var(--line); color: var(--muted); font: 11px ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .dots { display: flex; gap: 5px; }
+    .dots i { width: 7px; height: 7px; border-radius: 50%; background: #f78166; }
+    .dots i:nth-child(2) { background: #e3b341; }
+    .dots i:nth-child(3) { background: #3fb950; }
+    .command-list { padding: 8px 15px 14px; }
+    .command-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; min-height: 47px; border-bottom: 1px solid rgba(48, 57, 70, .55); }
+    .command-row:last-child { border: 0; }
+    .command-row code { overflow-wrap: anywhere; color: var(--green); font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .command-row span { color: var(--muted); font-size: 11px; }
+    .copy-button { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; color: var(--muted); background: transparent; cursor: pointer; font-size: 11px; }
+    .copy-button:hover { color: var(--text); border-color: #637083; }
+
+    .concept-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-card { padding: 20px; }
+    .concept-card .symbol { color: var(--orange); font: 18px ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .concept-card h3 { margin: 14px 0 6px; font-size: 15px; }
+    .concept-card p { margin: 0; color: var(--muted); font-size: 13px; }
+
+    .checklist {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 23px 25px;
+      border: 1px solid #3f7250;
+      border-radius: var(--radius);
+      background: linear-gradient(110deg, rgba(46, 160, 67, .12), rgba(22, 27, 34, .8));
+    }
+    .checklist h2 { margin: 0; font-size: 19px; letter-spacing: -.025em; }
+    .checklist p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+    .check-button { flex: 0 0 auto; padding: 10px 13px; border: 1px solid #3f7250; border-radius: 8px; color: var(--green); background: rgba(46, 160, 67, .12); cursor: pointer; font-weight: 650; font-size: 12px; }
+    .check-button:hover { background: rgba(46, 160, 67, .2); }
+    .footer { padding: 32px 0 38px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 18px; }
+    .footer strong { color: var(--text); }
+    .toast { position: fixed; right: 20px; bottom: 20px; z-index: 10; padding: 10px 14px; transform: translateY(15px); border: 1px solid var(--line); border-radius: 9px; opacity: 0; color: var(--text); background: var(--panel-2); transition: .2s ease; pointer-events: none; font-size: 13px; }
+    .toast.visible { transform: translateY(0); opacity: 1; }
+
+    @media (max-width: 760px) {
+      .nav-links { gap: 14px; }
+      .nav-links a:not(.nav-cta) { display: none; }
+      .hero { padding: 62px 0 48px; }
+      .section { padding: 40px 0; }
+      .section-heading { align-items: start; flex-direction: column; }
+      .compare-grid, .commands-layout { grid-template-columns: 1fr; }
+      .workflow { grid-template-columns: repeat(2, 1fr); }
+      .concept-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 460px) {
+      .wrap { width: min(100% - 28px, 1120px); }
+      .brand { font-size: 13px; }
+      .nav-cta { padding: 7px 9px; font-size: 11px; }
+      .hero-copy { font-size: 15px; }
+      .workflow { grid-template-columns: 1fr; }
+      .step-card p { min-height: 0; }
+      .checklist { align-items: start; flex-direction: column; padding: 20px; }
+      .footer-inner { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav wrap" aria-label="Main navigation">
+      <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">⌘</span> Git &amp; GitHub</a>
+      <div class="nav-links">
+        <a href="#difference">The difference</a>
+        <a href="#workflow">Workflow</a>
+        <a href="#commands">Commands</a>
+        <a class="nav-cta" href="#start">Get started <span aria-hidden="true">↗</span></a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero wrap">
+      <div class="eyebrow">A quick field guide</div>
+      <h1>Build together.<br><span>Version by version.</span></h1>
+      <p class="hero-copy">A friendly introduction to Git and GitHub: track your work, experiment safely, and share projects with the world.</p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="#workflow">Explore the workflow <span aria-hidden="true">↓</span></a>
+        <a class="button button-secondary" href="#commands"><span aria-hidden="true">›_</span> Browse commands</a>
+      </div>
+      <div class="hero-meta">
+        <span><strong>Git</strong> keeps your history</span>
+        <span><strong>GitHub</strong> brings teams together</span>
+        <span><strong>Both</strong> make collaboration easier</span>
+      </div>
+    </section>
+
+    <section class="section wrap" id="difference">
+      <div class="section-heading">
+        <div><div class="label">01 / The basics</div><h2>Git is not GitHub.</h2></div>
+        <p>They work brilliantly together, but they solve different parts of the same problem.</p>
+      </div>
+      <div class="compare-grid">
+        <article class="compare-card">
+          <div class="card-icon" aria-hidden="true">⌘</div>
+          <h3>Git <span style="color:var(--muted);font-weight:400">/ the tool</span></h3>
+          <p>A version control system that runs on your computer. Git records changes as snapshots so you can review, compare, and restore your work.</p>
+          <span class="tag">works locally · open source</span>
+        </article>
+        <article class="compare-card">
+          <div class="card-icon" aria-hidden="true" style="color:var(--blue)">◉</div>
+          <h3>GitHub <span style="color:var(--muted);font-weight:400">/ the platform</span></h3>
+          <p>A place to host Git repositories online. GitHub adds collaboration tools like pull requests, issues, project boards, and code review.</p>
+          <span class="tag">hosts projects · connects people</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="section wrap" id="workflow">
+      <div class="section-heading">
+        <div><div class="label">02 / The everyday loop</div><h2>From change to collaboration.</h2></div>
+        <p>Most Git workflows follow a simple cycle. Make a change, save a snapshot, then share it.</p>
+      </div>
+      <div class="workflow">
+        <article class="step-card">
+          <div class="step-number">STEP 01</div><h3>Make changes</h3>
+          <p>Edit files in your project and try things out.</p>
+          <code>working directory</code>
+        </article>
+        <article class="step-card">
+          <div class="step-number">STEP 02</div><h3>Stage a snapshot</h3>
+          <p>Choose which changes belong in your next save.</p>
+          <code>git add .</code>
+        </article>
+        <article class="step-card">
+          <div class="step-number">STEP 03</div><h3>Commit locally</h3>
+          <p>Record a named checkpoint in your history.</p>
+          <code>git commit -m "Add feature"</code>
+        </article>
+        <article class="step-card">
+          <div class="step-number">STEP 04</div><h3>Share on GitHub</h3>
+          <p>Push your commits so others can see and review.</p>
+          <code>git push</code>
+        </article>
+      </div>
+    </section>
+
+    <section class="section wrap" id="commands">
+      <div class="section-heading">
+        <div><div class="label">03 / Your toolkit</div><h2>Small commands. Big confidence.</h2></div>
+      </div>
+      <div class="commands-layout">
+        <div class="command-intro">
+          <p>Keep these handy as you get comfortable. Pick a group to see a few useful commands, then copy one to your clipboard.</p>
+          <div class="tabs" role="tablist" aria-label="Command groups">
+            <button class="tab" id="tab-start" role="tab" aria-selected="true" aria-controls="command-panel" data-group="start">Get started</button>
+            <button class="tab" id="tab-branch" role="tab" aria-selected="false" aria-controls="command-panel" data-group="branch">Branches</button>
+            <button class="tab" id="tab-share" role="tab" aria-selected="false" aria-controls="command-panel" data-group="share">Share</button>
+          </div>
+        </div>
+        <div class="terminal" id="command-panel" role="tabpanel" aria-labelledby="tab-start">
+          <div class="terminal-top"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>your terminal</span></div>
+          <div class="command-list" id="command-list" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section wrap">
+      <div class="section-heading">
+        <div><div class="label">04 / GitHub vocabulary</div><h2>Tools for working in the open.</h2></div>
+        <p>These building blocks help turn a repository into a shared workspace.</p>
+      </div>
+      <div class="concept-grid">
+        <article class="concept-card"><div class="symbol">⑂</div><h3>Branch</h3><p>An independent line of work. Build a feature without changing the main version until you are ready.</p></article>
+        <article class="concept-card"><div class="symbol">⇄</div><h3>Pull request</h3><p>A proposal to merge changes. Teammates can discuss, review, and improve the code together.</p></article>
+        <article class="concept-card"><div class="symbol">#</div><h3>Issue</h3><p>A place to track a bug, question, or idea and coordinate what should happen next.</p></article>
+      </div>
+    </section>
+
+    <section class="section wrap" id="start">
+      <div class="checklist">
+        <div>
+          <h2>Ready for your first repository?</h2>
+          <p>Install Git, create a GitHub account, then try the workflow above on a small project.</p>
+        </div>
+        <button class="check-button" id="check-button" type="button">Mark as my next step <span aria-hidden="true">→</span></button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner wrap"><span><strong>Git &amp; GitHub</strong> — a demo field guide</span><span>Learn by doing. Save often. Share generously.</span></div>
+  </footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const commandGroups = {
+      start: [
+        ["git init", "start tracking a project"],
+        ["git status", "see what has changed"],
+        ['git add .', "stage your changes"],
+        ['git commit -m "Describe your change"', "save a checkpoint"]
+      ],
+      branch: [
+        ["git branch", "list your branches"],
+        ["git switch -c feature-name", "create and switch branches"],
+        ["git switch main", "return to the main branch"],
+        ["git merge feature-name", "bring a branch into the current one"]
+      ],
+      share: [
+        ["git clone <url>", "copy a repository to your computer"],
+        ["git remote -v", "check your connected repository"],
+        ["git pull", "get the latest changes"],
+        ["git push", "share your commits"]
+      ]
+    };
+
+    const commandList = document.querySelector("#command-list");
+    const tabs = [...document.querySelectorAll(".tab")];
+    const panel = document.querySelector("#command-panel");
+    const toast = document.querySelector("#toast");
+    let toastTimer;
+
+    function renderCommands(group) {
+      commandList.replaceChildren();
+      commandGroups[group].forEach(([command, description]) => {
+        const row = document.createElement("div");
+        row.className = "command-row";
+        const details = document.createElement("div");
+        const code = document.createElement("code");
+        code.textContent = command;
+        const note = document.createElement("span");
+        note.textContent = description;
+        details.append(code, document.createElement("br"), note);
+        const copy = document.createElement("button");
+        copy.type = "button";
+        copy.className = "copy-button";
+        copy.textContent = "Copy";
+        copy.setAttribute("aria-label", `Copy ${command}`);
+        copy.addEventListener("click", () => copyCommand(command));
+        row.append(details, copy);
+        commandList.append(row);
+      });
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("visible");
+      window.clearTimeout(toastTimer);
+      toastTimer = window.setTimeout(() => toast.classList.remove("visible"), 2200);
+    }
+
+    async function copyCommand(command) {
+      try {
+        await navigator.clipboard.writeText(command);
+        showToast("Command copied to clipboard");
+      } catch (error) {
+        showToast("Clipboard unavailable — select and copy the command");
+      }
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabs.forEach((item) => item.setAttribute("aria-selected", String(item === tab)));
+        panel.setAttribute("aria-labelledby", tab.id);
+        renderCommands(tab.dataset.group);
+      });
+    });
+
+    document.querySelector("#check-button").addEventListener("click", (event) => {
+      const button = event.currentTarget;
+      const isMarked = button.getAttribute("aria-pressed") === "true";
+      button.setAttribute("aria-pressed", String(!isMarked));
+      button.innerHTML = isMarked
+        ? 'Mark as my next step <span aria-hidden="true">→</span>'
+        : 'Added to my next steps <span aria-hidden="true">✓</span>';
+    });
+
+    renderCommands("start");
+  </script>
+</body>
+</html>
